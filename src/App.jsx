@@ -612,4 +612,22 @@ const styles = {
   suggestionsDropdown: {
     position: 'absolute',
     top: '100%',
-   
+    left: 0,
+    right: 0,
+    marginTop: '4px',
+    backgroundColor: 'white',
+    border: '1px solid #d1d5db',
+    borderRadius: '6px',
+    boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+    maxHeight: '200px',
+    overflowY: 'auto',
+    zIndex: 10
+  },
+  suggestionItem: {
+    padding: '10px',
+    fontSize: '13px',
+    color: '#374151',
+    cursor: 'pointer',
+    borderBottom: '1px solid #f3f4f6'
+  }
+};
