@@ -8,7 +8,6 @@ import {
 } from 'firebase/auth';
 import { 
   collection, 
-  addEventHandler, 
   query, 
   orderBy, 
   onSnapshot, 
@@ -32,7 +31,6 @@ export default function App() {
   const [isSignUp, setIsSignUp] = useState(false);
   const [error, setError] = useState('');
 
-  // Dashboard & Advanced Filters State
   const [circles, setCircles] = useState([]);
   const [searchLocation, setSearchLocation] = useState('');
   const [locationSuggestions, setLocationSuggestions] = useState([]);
@@ -40,7 +38,6 @@ export default function App() {
   const [womenOnlyFilter, setWomenOnlyFilter] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('All');
 
-  // New Circle Modal State
   const [showModal, setShowModal] = useState(false);
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState('Computer Science & Python');
@@ -63,7 +60,7 @@ export default function App() {
         const list = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         setCircles(list);
       }, (err) => {
-        console.log("Firestore sync notice: Using offline demo state if rules restrict", err);
+        console.log("Firestore sync notice:", err);
       });
       return () => unsubscribeCircles();
     } catch (e) {
@@ -178,7 +175,6 @@ export default function App() {
 
   return (
     <div style={styles.dashboardContainer}>
-      {/* Top Navbar */}
       <header style={styles.navbar}>
         <div style={{display: 'flex', alignItems: 'center', gap: '12px'}}>
           <div style={styles.avatar}>
@@ -195,25 +191,19 @@ export default function App() {
         </div>
       </header>
 
-      {/* Main Content Area */}
       <main style={styles.mainContent}>
-        
-        {/* AI Smart Suggestion Banner */}
         <div style={styles.aiBanner}>
           <div style={{display: 'flex', gap: '12px', alignItems: 'center'}}>
             <span style={{fontSize: '24px'}}>✨</span>
             <div>
               <h4 style={{margin: '0 0 4px 0', color: '#3730a3'}}>AI Skill Match Recommendation</h4>
-              <p style={{margin: 0, fontSize: '13px', color: '#4338ca'}}>Based on your engineering & Python track, matching with 3 active data science study circles nearby.</p>
+              <p style={{margin: 0, fontSize: '13px', color: '#4338ca'}}>Based on your engineering profile, matching with active study circles nearby.</p>
             </div>
           </div>
         </div>
 
-        {/* Advanced Filter Toolbar */}
         <div style={styles.filterCard}>
           <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '12px'}}>
-            
-            {/* Smart Location Input with Autocomplete */}
             <div style={{position: 'relative'}}>
               <label style={styles.label}>Smart Location Search</label>
               <input 
@@ -238,7 +228,6 @@ export default function App() {
               )}
             </div>
 
-            {/* Radius Slider */}
             <div>
               <label style={styles.label}>Radius Range: <b>{radiusKm} km</b></label>
               <input 
@@ -251,7 +240,6 @@ export default function App() {
               />
             </div>
 
-            {/* Category Filter */}
             <div>
               <label style={styles.label}>Category</label>
               <select 
@@ -267,7 +255,6 @@ export default function App() {
             </div>
           </div>
 
-          {/* Checkbox Filters */}
           <div style={{marginTop: '16px', display: 'flex', alignItems: 'center', gap: '8px'}}>
             <input 
               type="checkbox" 
@@ -282,7 +269,6 @@ export default function App() {
           </div>
         </div>
 
-        {/* Header & Host Action */}
         <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px'}}>
           <h3 style={{margin: 0, color: '#1f2937'}}>Live Cloud Study Circles ({filteredCircles.length})</h3>
           <button onClick={() => setShowModal(true)} style={styles.primaryButtonSmall}>
@@ -290,10 +276,9 @@ export default function App() {
           </button>
         </div>
 
-        {/* Circles Grid */}
         {filteredCircles.length === 0 ? (
           <div style={styles.emptyState}>
-            <p style={{margin: 0, color: '#6b7280'}}>No study circles found matching your location or filters. Host one now!</p>
+            <p style={{margin: 0, color: '#6b7280'}}>No study circles found matching your filters. Host one now!</p>
           </div>
         ) : (
           <div style={styles.grid}>
@@ -316,7 +301,6 @@ export default function App() {
         )}
       </main>
 
-      {/* Host New Circle Modal */}
       {showModal && (
         <div style={styles.modalOverlay}>
           <div style={styles.modalContent}>
@@ -326,7 +310,7 @@ export default function App() {
                 <label style={styles.label}>Circle Title / Topic</label>
                 <input 
                   type="text" 
-                  placeholder="e.g. Python & ML Practical Prep" 
+                  placeholder="e.g. Python Practical Prep" 
                   value={title} 
                   onChange={(e) => setTitle(e.target.value)}
                   required 
@@ -347,7 +331,7 @@ export default function App() {
                 <label style={styles.label}>Location / Meet Spot</label>
                 <input 
                   type="text" 
-                  placeholder="e.g. Greater Noida, Knowledge Park III Cafe" 
+                  placeholder="e.g. Greater Noida, Knowledge Park III" 
                   value={location} 
                   onChange={(e) => setLocation(e.target.value)}
                   required 
@@ -381,226 +365,34 @@ export default function App() {
 }
 
 const styles = {
-  authContainer: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    minHeight: '100vh',
-    backgroundColor: '#f3f4f6',
-    padding: '16px'
-  },
-  authCard: {
-    backgroundColor: 'white',
-    padding: '32px',
-    borderRadius: '12px',
-    boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
-    width: '100%',
-    maxWidth: '400px'
-  },
-  dashboardContainer: {
-    minHeight: '100vh',
-    backgroundColor: '#f9fafb',
-    fontFamily: 'sans-serif'
-  },
-  navbar: {
-    backgroundColor: 'white',
-    padding: '12px 24px',
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    borderBottom: '1px solid #e5e7eb'
-  },
-  avatar: {
-    width: '40px',
-    height: '40px',
-    borderRadius: '50%',
-    backgroundColor: '#4f46e5',
-    color: 'white',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    fontWeight: 'bold',
-    fontSize: '18px'
-  },
-  logoutButton: {
-    padding: '6px 12px',
-    backgroundColor: '#fee2e2',
-    color: '#dc2626',
-    border: 'none',
-    borderRadius: '6px',
-    fontWeight: '600',
-    cursor: 'pointer'
-  },
-  mainContent: {
-    padding: '24px',
-    maxWidth: '1100px',
-    margin: '0 auto'
-  },
-  aiBanner: {
-    backgroundColor: '#eef2ff',
-    border: '1px solid #c7d2fe',
-    borderRadius: '10px',
-    padding: '16px',
-    marginBottom: '20px'
-  },
-  filterCard: {
-    backgroundColor: 'white',
-    padding: '20px',
-    borderRadius: '10px',
-    boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
-    marginBottom: '24px'
-  },
-  label: {
-    display: 'block',
-    fontSize: '12px',
-    fontWeight: '600',
-    color: '#374151',
-    marginBottom: '6px'
-  },
-  input: {
-    width: '100%',
-    padding: '10px',
-    borderRadius: '6px',
-    border: '1px solid #d1d5db',
-    fontSize: '14px',
-    boxSizing: 'border-box'
-  },
-  primaryButton: {
-    width: '100%',
-    padding: '10px',
-    backgroundColor: '#4f46e5',
-    color: 'white',
-    border: 'none',
-    borderRadius: '6px',
-    fontWeight: '600',
-    cursor: 'pointer'
-  },
-  primaryButtonSmall: {
-    padding: '8px 16px',
-    backgroundColor: '#4f46e5',
-    color: 'white',
-    border: 'none',
-    borderRadius: '6px',
-    fontWeight: '600',
-    cursor: 'pointer'
-  },
-  secondaryButton: {
-    width: '100%',
-    padding: '10px',
-    backgroundColor: '#e5e7eb',
-    color: '#374151',
-    border: 'none',
-    borderRadius: '6px',
-    fontWeight: '600',
-    cursor: 'pointer'
-  },
-  textButton: {
-    background: 'none',
-    border: 'none',
-    color: '#4f46e5',
-    cursor: 'pointer',
-    fontSize: '13px'
-  },
-  errorBox: {
-    padding: '10px',
-    backgroundColor: '#fee2e2',
-    color: '#dc2626',
-    borderRadius: '6px',
-    fontSize: '13px'
-  },
-  grid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-    gap: '16px'
-  },
-  circleCard: {
-    backgroundColor: 'white',
-    padding: '16px',
-    borderRadius: '10px',
-    boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
-    border: '1px solid #e5e7eb',
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'space-between'
-  },
-  tagBadge: {
-    display: 'inline-block',
-    padding: '4px 8px',
-    backgroundColor: '#f3f4f6',
-    color: '#4b5563',
-    borderRadius: '4px',
-    fontSize: '11px',
-    fontWeight: '600',
-    width: 'fit-content'
-  },
-  badgePink: {
-    padding: '2px 8px',
-    backgroundColor: '#fce7f3',
-    color: '#db2777',
-    borderRadius: '12px',
-    fontSize: '10px',
-    fontWeight: '700'
-  },
-  joinButton: {
-    padding: '6px 12px',
-    backgroundColor: '#10b981',
-    color: 'white',
-    border: 'none',
-    borderRadius: '4px',
-    fontSize: '12px',
-    fontWeight: '600',
-    cursor: 'pointer'
-  },
-  emptyState: {
-    backgroundColor: 'white',
-    padding: '40px',
-    textAlign: 'center',
-    borderRadius: '10px',
-    border: '1px dashed #d1d5db'
-  },
-  modalOverlay: {
-    position: 'fixed',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: '16px',
-    zIndex: 1000
-  },
-  modalContent: {
-    backgroundColor: 'white',
-    padding: '24px',
-    borderRadius: '12px',
-    width: '100%',
-    maxWidth: '450px'
-  },
-  suggestionsDropdown: {
-    position: 'absolute',
-    top: '100%',
-    left: 0,
-    right: 0,
-    backgroundColor: 'white',
-    border: '1px solid #d1d5db',
-    borderRadius: '6px',
-    boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-    zIndex: 10,
-    marginTop: '2px'
-  },
-  suggestionItem: {
-    padding: '8px 12px',
-    fontSize: '13px',
-    cursor: 'pointer',
-    borderBottom: '1px solid #f3f4f6'
-  }
+  authContainer: { display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', backgroundColor: '#f3f4f6', padding: '16px' },
+  authCard: { backgroundColor: 'white', padding: '32px', borderRadius: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.08)', width: '100%', maxWidth: '400px' },
+  dashboardContainer: { minHeight: '100vh', backgroundColor: '#f9fafb', fontFamily: 'sans-serif' },
+  navbar: { backgroundColor: 'white', padding: '12px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #e5e7eb' },
+  avatar: { width: '40px', height: '40px', borderRadius: '50%', backgroundColor: '#4f46e5', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '18px' },
+  logoutButton: { padding: '6px 12px', backgroundColor: '#fee2e2', color: '#dc2626', border: 'none', borderRadius: '6px', fontWeight: '600', cursor: 'pointer' },
+  mainContent: { padding: '24px', maxWidth: '1100px', margin: '0 auto' },
+  aiBanner: { backgroundColor: '#eef2ff', border: '1px solid #c7d2fe', borderRadius: '10px', padding: '16px', marginBottom: '20px' },
+  filterCard: { backgroundColor: 'white', padding: '20px', borderRadius: '10px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', marginBottom: '24px' },
+  label: { display: 'block', fontSize: '12px', fontWeight: '600', color: '#374151', marginBottom: '6px' },
+  input: { width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #d1d5db', fontSize: '14px', boxSizing: 'border-box' },
+  primaryButton: { width: '100%', padding: '10px', backgroundColor: '#4f46e5', color: 'white', border: 'none', borderRadius: '6px', fontWeight: '600', cursor: 'pointer' },
+  primaryButtonSmall: { padding: '8px 16px', backgroundColor: '#4f46e5', color: 'white', border: 'none', borderRadius: '6px', fontWeight: '600', cursor: 'pointer' },
+  secondaryButton: { width: '100%', padding: '10px', backgroundColor: '#e5e7eb', color: '#374151', border: 'none', borderRadius: '6px', fontWeight: '600', cursor: 'pointer' },
+  textButton: { background: 'none', border: 'none', color: '#4f46e5', cursor: 'pointer', fontSize: '13px' },
+  errorBox: { padding: '10px', backgroundColor: '#fee2e2', color: '#dc2626', borderRadius: '6px', fontSize: '13px' },
+  grid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '16px' },
+  circleCard: { backgroundColor: 'white', padding: '16px', borderRadius: '10px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', border: '1px solid #e5e7eb', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' },
+  tagBadge: { display: 'inline-block', padding: '4px 8px', backgroundColor: '#f3f4f6', color: '#4b5563', borderRadius: '4px', fontSize: '11px', fontWeight: '600', width: 'fit-content' },
+  badgePink: { padding: '2px 8px', backgroundColor: '#fce7f3', color: '#db2777', borderRadius: '12px', fontSize: '10px', fontWeight: '700' },
+  joinButton: { padding: '6px 12px', backgroundColor: '#10b981', color: 'white', border: 'none', borderRadius: '4px', fontSize: '12px', fontWeight: '600', cursor: 'pointer' },
+  emptyState: { backgroundColor: 'white', padding: '40px', textAlign: 'center', borderRadius: '10px', border: '1px dashed #d1d5db' },
+  modalOverlay: { position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '16px', zIndex: 1000 },
+  modalContent: { backgroundColor: 'white', padding: '24px', borderRadius: '12px', width: '100%', maxWidth: '450px' },
+  suggestionsDropdown: { position: 'absolute', top: '100%', left: 0, right: 0, backgroundColor: 'white', border: '1px solid #d1d5db', borderRadius: '6px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)', zIndex: 10, marginTop: '2px' },
+  suggestionItem: { padding: '8px 12px', fontSize: '13px', cursor: 'pointer', borderBottom: '1px solid #f3f4f6' }
 };
-
-                                                                                                                                                                                                                                                                    try {
-                                                                                                                                                                                                                                                                          await addDoc(collection(db, "study_circles"), {
-                                                                                                                                                                                                                                                                                  title: title,
+title: title,
                                                                                                                                                                                                                                                                                           location: location,
                                                                                                                                                                                                                                                                                                   category: category,
                                                                                                                                                                                                                                                                                                           level: level,
