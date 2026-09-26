@@ -3,12 +3,13 @@ import { auth, db } from './firebase';
 import { 
   signInWithEmailAndPassword, 
   createUserWithEmailAndPassword, 
+  signInWithPopup,
+  GoogleAuthProvider,
   signOut, 
   onAuthStateChanged 
 } from 'firebase/auth';
 import { 
   collection, 
-  addEventHandler, 
   query, 
   orderBy, 
   onSnapshot, 
@@ -85,6 +86,16 @@ export default function App() {
     }
   };
 
+  const handleGoogleSignIn = async () => {
+    setError('');
+    try {
+      const provider = new GoogleAuthProvider();
+      await signInWithPopup(auth, provider);
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
   const handleLocationInput = (val) => {
     setSearchLocation(val);
     if (val.trim().length > 0) {
@@ -155,6 +166,16 @@ export default function App() {
               {isSignUp ? 'Create Account' : 'Sign In'}
             </button>
           </form>
+
+          <div style={{display: 'flex', alignItems: 'center', margin: '20px 0', color: '#9ca3af', fontSize: '12px'}}>
+            <div style={{flex: 1, height: '1px', backgroundColor: '#e5e7eb'}}></div>
+            <span style={{padding: '0 10px'}}>OR</span>
+            <div style={{flex: 1, height: '1px', backgroundColor: '#e5e7eb'}}></div>
+          </div>
+
+          <button onClick={handleGoogleSignIn} style={styles.googleButton}>
+            🔍 Continue with Google
+          </button>
 
           <div style={{textAlign: 'center', marginTop: '20px'}}>
             <button 
@@ -475,6 +496,16 @@ const styles = {
     fontWeight: '600',
     cursor: 'pointer'
   },
+  googleButton: {
+    width: '100%',
+    padding: '10px',
+    backgroundColor: 'white',
+    color: '#374151',
+    border: '1px solid #d1d5db',
+    borderRadius: '6px',
+    fontWeight: '600',
+    cursor: 'pointer'
+  },
   primaryButtonSmall: {
     padding: '8px 16px',
     backgroundColor: '#4f46e5',
@@ -581,20 +612,4 @@ const styles = {
   suggestionsDropdown: {
     position: 'absolute',
     top: '100%',
-    left: 0,
-    right: 0,
-    backgroundColor: 'white',
-    border: '1px solid #d1d5db',
-    borderRadius: '6px',
-    boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-    zIndex: 10,
-    marginTop: '2px'
-  },
-  suggestionItem: {
-    padding: '8px 12px',
-    fontSize: '13px',
-    cursor: 'pointer',
-    borderBottom: '1px solid #f3f4f6'
-  }
-};
-                  
+   
