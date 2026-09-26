@@ -608,4 +608,29 @@ const styles = {
     backgroundColor: 'white',
     padding: '24px',
     borderRadius: '12px',
-    width: '10
+    width: '100%',
+    maxWidth: '480px',
+    maxHeight: '90vh',
+    overflowY: 'auto'
+  },
+  suggestionsDropdown: {
+    position: 'absolute',
+    top: '100%',
+    left: 0,
+    right: 0,
+    backgroundColor: 'white',
+    border: '1px solid #d1d5db',
+    borderRadius: '6px',
+    marginTop: '4px',
+    boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
+    zIndex: 10,
+    maxHeight: '200px',
+    overflowY: 'auto'
+  },
+  suggestionItem: {
+    padding: '8px 12px',
+    fontSize: '13px',
+    cursor: 'pointer',
+    borderBottom: '1px solid #f3f4f6'
+  }
+};
